@@ -1,7 +1,10 @@
 import dotenv from 'dotenv'
-import { app } from './app.js'
 dotenv.config()
-const PORT = process.env.PORT
-app.listen(PORT)
+import { app } from './app.js'
+import { initDatabase } from './db/init.js'
 
+const PORT = Number(process.env.PORT) || 3000
+
+await initDatabase() // waits for Mongo to connect
+app.listen(PORT)
 console.info(`Server is running on http://localhost:${PORT}`)
