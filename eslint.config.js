@@ -31,7 +31,7 @@ export default [
       // Hooks best practices
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-
+      'react/prop-types': 'off',
       // (Optional) keep default unused-vars behavior
       // If you still get false positives from tooling, you could relax it:
       // 'no-unused-vars': ['warn', { varsIgnorePattern: '^React$' }],
