@@ -13,6 +13,7 @@ jobs:
       url: ${{ steps.deploy-frontend.outputs.web_url }}
     steps:
       - uses: actions/checkout@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -22,32 +23,40 @@ jobs:
         with:
           service_account: ${{ secrets.GOOGLECLOUD_SERVICE_ACCOUNT }}
           credentials_json: ${{ secrets.GOOGLECLOUD_CREDENTIALS }}
+
       - name: Build and push backend image
+        id: build-backend
         uses: docker/build-push-action@v4
         with:
           context: ./backend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend:latest
+          outputs: type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/blog-backend,push-by-digest=true
+
       - id: deploy-backend
         name: Deploy backend
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: blog-backend
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend:latest
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend@${{ steps.build-backend.outputs.digest }}
           region: ${{ secrets.GOOGLECLOUD_REGION }}
+
       - name: Build and push frontend image
+        id: build-frontend
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend:latest
-          build-args: VIT_BACKEND_URL=${{ steps.deploy-backend.outputs.url }}/api/v1
+          outputs: type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend,push-by-digest=true
+          build-args: |
+            VITE_BACKEND_URL=${{ steps.deploy-backend.outputs.url }}/api/v1
+
       - id: deploy-frontend
         name: Deploy frontend
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: blog-frontend
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend:latest
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend@${{ steps.build-frontend.outputs.digest }}
           region: ${{ secrets.GOOGLECLOUD_REGION }}
-          
