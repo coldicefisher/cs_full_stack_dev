@@ -1,11 +1,13 @@
-import { CreatePost } from './components/CreatePost.jsx'
-import { PostFilter } from './components/PostFilter.jsx'
-import { PostSorting } from './components/PostSorting.jsx'
-import { PostList } from './components/PostList.jsx'
+import { CreatePost } from '../components/CreatePost.jsx'
+import { PostFilter } from '../components/PostFilter.jsx'
+import { PostSorting } from '../components/PostSorting.jsx'
+import { PostList } from '../components/PostList.jsx'
 
 import { useQuery } from '@tanstack/react-query'
-import { getPosts } from './api/posts.js'
+import { getPosts } from '../api/posts.js'
 import { useState } from 'react'
+
+import { Header } from '../components/Header.jsx'
 
 export function Blog() {
   const [author, setAuthor] = useState('')
@@ -21,7 +23,9 @@ export function Blog() {
 
   return (
     <div style={{ padding: 8 }}>
-      <h1>Welcome to my Blog!</h1>
+      <Header />
+      <br />
+      <hr />
       <CreatePost />
       <br />
       <hr />
