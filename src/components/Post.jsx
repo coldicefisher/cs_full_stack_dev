@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { User } from './User.jsx'
 
-export function Post({ title, contents, userId }) {
+export function Post({ title, contents, author: userId }) {
   return (
     <article>
       <h3>{title}</h3>
@@ -19,5 +19,5 @@ export function Post({ title, contents, userId }) {
 Post.propTypes = {
   title: PropTypes.string.isRequired,
   contents: PropTypes.string.isRequired,
-  userId: PropTypes.string,
+  author: PropTypes.string,
 }
