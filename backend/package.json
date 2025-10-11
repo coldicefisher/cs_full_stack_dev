@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint src",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "start": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
