@@ -54,4 +54,32 @@ if (process.env.NODE_ENV !== 'production') {
   })
 }
 
-export { createDevServer }
+async function createProdServer() {
+  const app = express()
+
+  app.use((await import('compression')).default())
+  app.use(
+    (await import('serve-static')).default(
+      path.resolve(__dirname, 'dist/client'),
+      { index: false },
+    ),
+  ),
+    app.use('*', async (req, res, next) => {
+      try {
+        const templateHtml = fs.readFileSync(
+          path.resolve(__dirname, 'dist/client/index.html'),
+          'utf-8',
+        )
+        const render = (await import('./dist/server/entry-server.js')).render
+        const appHtml = await render(req)
+        const html = templateHtml.replace(`<!--ssr-outlet-->`, appHtml)
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
+      } catch (e) {
+        next(e)
+      }
+    })
+
+  return app
+}
+
+export { createDevServer, createProdServer }
