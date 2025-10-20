@@ -82,4 +82,22 @@ async function createProdServer() {
   return app
 }
 
+if (process.env.NODE_ENV === 'production') {
+  const app = await createProdServer()
+  app.listen(process.env.PORT, () => {
+    console.log(
+      `SSR production server running on http://
+    localhost:${process.env.PORT}`,
+    )
+  })
+} else {
+  console.log('Running outside production mode')
+  const app = await createDevServer()
+  app.listen(process.env.PORT, () => {
+    console.log(
+      `SSR development server running on http://localhost:${process.env.PORT}`,
+    )
+  })
+}
+
 export { createDevServer, createProdServer }
