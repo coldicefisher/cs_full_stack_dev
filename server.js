@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 import express from 'express'
 import dotenv from 'dotenv'
 import process from 'node:process'
+import { generateSitemap } from './generateSitemap.js'
 dotenv.config()
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -21,6 +22,13 @@ async function createDevServer() {
   app.use(vite.middlewares)
 
   app.use('*', async (req, res, next) => {
+    if (req.originalUrl === '/sitemap.xml') {
+      const sitemap = await generateSitemap()
+      return res
+        .status(200)
+        .set({ 'Content-Type': 'application/xml' })
+        .end(sitemap)
+    }
     try {
       const templateHtml = fs.readFileSync(
         path.resolve(__dirname, 'index.html'),
@@ -46,14 +54,6 @@ async function createDevServer() {
   return app
 }
 
-if (process.env.NODE_ENV !== 'production') {
-  const port = process.env.PORT || 5173
-  const app = await createDevServer()
-  app.listen(port, () => {
-    console.log(`SSR dev server running: http://localhost:${port}`)
-  })
-}
-
 async function createProdServer() {
   const app = express()
 
@@ -65,6 +65,13 @@ async function createProdServer() {
     ),
   ),
     app.use('*', async (req, res, next) => {
+      if (req.originalUrl === '/sitemap.xml') {
+        const sitemap = await generateSitemap()
+        return res
+          .status(200)
+          .set({ 'Content-Type': 'application/xml' })
+          .end(sitemap)
+      }
       try {
         const templateHtml = fs.readFileSync(
           path.resolve(__dirname, 'dist/client/index.html'),
@@ -82,22 +89,16 @@ async function createProdServer() {
   return app
 }
 
+const port = process.env.PORT || 5173
+
 if (process.env.NODE_ENV === 'production') {
   const app = await createProdServer()
-  app.listen(process.env.PORT, () => {
-    console.log(
-      `SSR production server running on http://
-    localhost:${process.env.PORT}`,
-    )
+  app.listen(port, () => {
+    console.log(`SSR production server running: http://localhost:${port}`)
   })
 } else {
-  console.log('Running outside production mode')
   const app = await createDevServer()
-  app.listen(process.env.PORT, () => {
-    console.log(
-      `SSR development server running on http://localhost:${process.env.PORT}`,
-    )
+  app.listen(port, () => {
+    console.log(`SSR dev server running: http://localhost:${port}`)
   })
 }
-
-export { createDevServer, createProdServer }
