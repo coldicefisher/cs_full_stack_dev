@@ -1,0 +1,4 @@
+{
+  "schema": "https://super-duper-telegram-x4gw7j6ppw3p5qx-3000.app.github.dev/graphql",
+  "documents": "src/api/graphql/**/*.{js,jsx}"
+}

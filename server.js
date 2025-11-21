@@ -8,6 +8,8 @@ import process from 'node:process'
 import { generateSitemap } from './generateSitemap.js'
 dotenv.config()
 
+const DISABLE_SSR =
+  process.env.DISABLE_SSR === '1' || process.env.DISABLE_SSR === 'true'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 async function createDevServer() {
@@ -40,7 +42,11 @@ async function createDevServer() {
         templateHtml,
       )
 
-      // NOTE: .jsx here
+      if (DISABLE_SSR) {
+        const html = template.replace(`<!--ssr-outlet-->`, '')
+        return res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
+      }
+
       const { render } = await vite.ssrLoadModule('/src/entry-server.jsx')
       const appHtml = await render(req)
       const html = template.replace(`<!--ssr-outlet-->`, appHtml)
