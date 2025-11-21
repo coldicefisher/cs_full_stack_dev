@@ -1,5 +1,3 @@
-import { listPostsByAuthor } from '../services/posts.js'
-
 export const userSchema = `#graphql
   type User {
     
@@ -9,9 +7,5 @@ export const userSchema = `#graphql
 `
 
 export const userResolver = {
-  User: {
-    posts: async (user) => {
-      return await listPostsByAuthor(user.username)
-    },
-  },
+  User: {},
 }

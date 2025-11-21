@@ -1,6 +1,4 @@
 import { createUser, loginUser } from '../services/users.js'
-import { createPost } from '../services/posts.js'
-import { GraphQLError } from 'graphql'
 
 export const mutationSchema = `#graphql
   type Mutation {
@@ -16,17 +14,6 @@ export const mutationResolver = {
     },
     loginUser: async (parent, { username, password }) => {
       return await loginUser({ username, password })
-    },
-    createPost: async (parent, { title, contents, tags }, { auth }) => {
-      if (!auth) {
-        throw new GraphQLError(
-          'You need to be authenticated to perform this action',
-          {
-            extensions: { code: 'UNAUTHENTICATED' },
-          },
-        )
-      }
-      return await createPost(auth.sub, { title, contents, tags })
     },
   },
 }
