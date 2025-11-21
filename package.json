@@ -8,9 +8,6 @@
     "dev-no-ssr": "cross-env DISABLE_SSR=1 node server.js",
     "start": "cross-env NODE_ENV=production node server",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/client",
-    "build:server": "vite build --outDir dist/server --ssr src/entry-server.jsx",
-    "lint": "eslint src",
     "preview": "vite preview",
     "prepare": "husky install"
   },
